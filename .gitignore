@@ -1,0 +1,10 @@
+.env
+variables.tf
+.vscode
+
+*.env
+!prod.env
+*.pem
+.vscode
+cmd/cmd
+.DS_Store
