@@ -1,29 +1,58 @@
-# Camp Me Go API GQL
-Graphql API for Camp Me App
+# Price monitor
 
-### Technologies
-#### Prisma Go Client
-ORM client for postgres DB
-#### gqlgen
-Builds gql server
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+  </ol>
+</details>
 
-### Setup locally
-1. Project needs `.env` in root folder and in `./internal/prisma`. Copy `.env.examples` in both respective folders as `.env` files and fill all variables.
+<!-- ABOUT THE PROJECT -->
+## About The Project
+Go program that monitors binance portfolio value
 
-2. When you first start or you have made changes to your model, migrate your database and re-generate your prisma and gql code. From the root run:
-
-    `make prepare`
-
-It will prepare run migration and generate graphql server code.
-
-3. Run gql server
-
-    `make dev`
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
-Resolver example
+
+### Built With
+
+* [Go](https://golang.org/)
+* [Docker](https://www.docker.com/)
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+### Prerequisites
+
+Go version > 1.16 installed.
+
+### Starting
+
+1. Clone repo and and start with: 
+```sh
+   go run main.go
+   ```
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+### Running docker on server with custom envs
 ```
-func (r *queryResolver) GetUserVote(ctx context.Context, input api.PriceVoteCheckInput) (bool, error) {
-	a , err := r.client.PriceVote.Query().Where(pricevote.And(pricevote.HasUserWith(user.IDEQ(input.UserID)), pricevote.HasPriceWith(price.IDEQ(input.VoteID)))).Only(ctx)
-}
+docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" dockerTagOrID
 ```
