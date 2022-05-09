@@ -36,7 +36,7 @@ func main() {
 		Secret: config.Secret,
 	}
 
-	bc := binance.NewBinanceClient(credentials, binance.WithTestFlag())
+	bc := binance.NewBinanceClient(credentials)
 	t := tasker.NewTasker(tasker.WithSignalChannel(so.SignalChanel))
 
 	tasks := []tasker.Task{

@@ -54,5 +54,5 @@ Go version > 1.16 installed.
 
 ### Running docker on server with custom envs
 ```
-docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" dockerTagOrID
+docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" -e KEY="" -e SECRET="" dockerTagOrID
 ```

@@ -67,20 +67,24 @@ func (c *Client) getPortfolio() (portfolio, error) {
 	balances := c.getAccountBalances()
 	portfolio := []Coin{}
 	for _, balance := range balances {
+		freeBalance, _ := strconv.ParseFloat(balance.Free, 64)
+		lockedBalance, _ := strconv.ParseFloat(balance.Locked, 64)
+		totalBalance := freeBalance + lockedBalance
+		if totalBalance == 0 {
+			continue
+		}
+
 		s, ok := price.ConvertToUSDTPair(balance.Asset)
 		if !ok {
 			continue
 		}
 
 		p, err := c.priceService.Symbol(s).Do(context.Background())
-		price, _ := strconv.ParseFloat(p[0].Price, 64)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get price")
+		if err != nil || len(p) == 0 {
+			return nil, errors.Wrap(err, "Failed to get price")
 		}
 
-		freeBalance, _ := strconv.ParseFloat(balance.Free, 64)
-		lockedBalance, _ := strconv.ParseFloat(balance.Locked, 64)
-		totalBalance := freeBalance + lockedBalance
+		price, _ := strconv.ParseFloat(p[0].Price, 64)
 		v := totalBalance * price
 		portfolio = append(portfolio, Coin{
 			asset:        p[0].Symbol,

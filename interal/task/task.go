@@ -37,7 +37,7 @@ func (bt *BinanceTask) RunTask(wg *sync.WaitGroup) error {
 		if err != nil {
 			return err
 		}
-	} else if bt.Counter == 0 {
+	} else if bt.Counter == 1 {
 		err := bt.sendNotification("Crypto monitor is started", bt.Recipient, "Portfolio alert")
 		if err != nil {
 			return err
