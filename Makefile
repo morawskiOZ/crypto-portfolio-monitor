@@ -1,1 +1,2 @@
-dev: cd cmd && go run main.go
+dev: 
+	cd cmd && go run main.go

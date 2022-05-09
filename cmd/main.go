@@ -44,6 +44,7 @@ func main() {
 			BinanceClient: bc,
 			MailClient:    mc,
 			Recipient:     config.EmailRecipient,
+			Counter:       0,
 		},
 	}
 	t.Run(tasks)
