@@ -44,6 +44,12 @@ func NewTasker(options ...option) *client {
 }
 
 func (c *client) scheduleTask(ot *observableTask) {
+	// Run the task for the first time before the ticker signals
+	c.wg.Add(1)
+	if err := ot.RunTask(c.wg); err != nil {
+		fmt.Printf("Error: %+v\n", err)
+	}
+	// Run the task every time the ticker signals or the close channel is closed
 	for {
 		select {
 		case <-ot.ticker.C:
