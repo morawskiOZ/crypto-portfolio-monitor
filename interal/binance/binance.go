@@ -109,3 +109,13 @@ func (c *Client) GetPortfolioTotalValue() (float64, error) {
 	}
 	return portfolioValue, nil
 }
+
+// GetSymbolValue allows to get price for symbol
+func (c *Client) GetSymbolValue(s string) (float64, error) {
+	p, err := c.priceService.Symbol(s).Do(context.Background())
+	if err != nil || len(p) == 0 {
+		return 0, errors.Wrap(err, "Failed to get price")
+	}
+
+	return strconv.ParseFloat(p[0].Price, 64)
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/morawskioz/binance-monitor/configs"
 	"github.com/morawskioz/binance-monitor/interal/binance"
@@ -41,10 +42,20 @@ func main() {
 
 	tasks := []tasker.Task{
 		&task.BinanceTask{
-			BinanceClient: bc,
-			MailClient:    mc,
-			Recipient:     config.EmailRecipient,
-			Counter:       0,
+			BinanceClient:  bc,
+			MailClient:     mc,
+			Recipient:      config.EmailRecipient,
+			Counter:        0,
+			TickerDuration: time.Hour,
+			Task:           task.MonitorPortfolio,
+		},
+		&task.BinanceTask{
+			BinanceClient:  bc,
+			MailClient:     mc,
+			Recipient:      config.EmailRecipient,
+			Counter:        0,
+			TickerDuration: time.Minute * 10,
+			Task:           task.MonitorSymbol,
 		},
 	}
 	t.Run(tasks)

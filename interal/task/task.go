@@ -1,7 +1,6 @@
 package task
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -9,47 +8,30 @@ import (
 	"github.com/morawskioz/binance-monitor/pkg/mail"
 )
 
+
+type exetuableTask func(bt *BinanceTask) error
+
 // BinanceTask is a task that implements the tasker interface so it can be scheduled
 type BinanceTask struct {
 	BinanceClient *binance.Client
 	MailClient    *mail.Client
 	Recipient     string
 	Counter       int
+	TickerDuration time.Duration
+	Task          exetuableTask
 }
 
 // RunTask runs the task
 func (bt *BinanceTask) RunTask(wg *sync.WaitGroup) error {
+	// TODO move the wg.Done inside tasker
 	defer wg.Done()
-	portfolioValue, err := bt.BinanceClient.GetPortfolioTotalValue()
-	bt.Counter++
-	if err != nil {
-		return err
-	}
 
-	if portfolioValue > 26987 {
-		msg := fmt.Sprintf("Time to sell, portfolio value is: %v", portfolioValue)
-		err := bt.sendNotification(msg, bt.Recipient, "Portfolio alert")
-		if err != nil {
-			return err
-		}
-	} else if bt.Counter%168 == 0 {
-		err := bt.sendNotification("Crypto monitor is working, be patient", bt.Recipient, "Portfolio alert")
-		if err != nil {
-			return err
-		}
-	} else if bt.Counter == 1 {
-		err := bt.sendNotification("Crypto monitor is started", bt.Recipient, "Portfolio alert")
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return bt.Task(bt)
 }
 
 // SetupTicker returns a ticker that will run the task every 60 minutes
 func (bt *BinanceTask) SetupTicker() *time.Ticker {
-	return time.NewTicker(time.Minute * 60)
+	return time.NewTicker(bt.TickerDuration)
 }
 
 func (bt *BinanceTask) sendNotification(msg string, recipient string, subject string) error {
