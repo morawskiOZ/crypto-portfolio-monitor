@@ -52,7 +52,7 @@ Go version > 1.16 installed.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-### Running docker on server with custom envs
+### Running docker on server with custom envs and in detached mode
 ```
-docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" -e KEY="" -e SECRET="" dockerTagOrID
+docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" -e KEY="" -e SECRET="" -d dockerTagOrID
 ```
