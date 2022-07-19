@@ -1,4 +1,4 @@
-# Price monitor
+# Crypto monitor
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -22,7 +22,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-Go program that monitors crypto portfolio value. Currently, it has build in Binance API. Feel free to extend it
+Go program that can monitor portfolio and coins' value. Currently, it has build in Binance API. Feel free to extend it
 
 > :warning: **By default tasker is using Binance TESTING API, add prod envs and remove `binanceAPI.WithTestFlag()` from `main.go` file`**
 <p align="right">(<a href="#top">back to top</a>)</p>
