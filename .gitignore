@@ -5,6 +5,7 @@ variables.tf
 *.env
 !prod.env
 *.pem
-.vscode
-cmd/cmd
+cmd
+!cmd/main.go
 .DS_Store
+/.idea

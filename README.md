@@ -22,8 +22,9 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-Go program that monitors binance portfolio value
+Go program that monitors crypto portfolio value. Currently, it has build in Binance API. Feel free to extend it
 
+> :warning: **By default tasker is using Binance TESTING API, add prod envs and remove `binanceAPI.WithTestFlag()` from `main.go` file`**
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -45,7 +46,7 @@ Go version > 1.16 installed.
 
 ### Starting
 
-1. Clone repo and and start with: 
+1. Clone repo and start with: 
 ```sh
    go run main.go
    ```

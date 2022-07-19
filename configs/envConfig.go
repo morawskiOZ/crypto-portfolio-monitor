@@ -10,11 +10,11 @@ import (
 type Config struct {
 	EmailPass      string `mapstructure:"EMAIL_PASS"`
 	EmailLogin     string `mapstructure:"EMAIL_LOGIN"`
-	SmtpPort       int    `mapstructure:"EMAIL_SMTP_PORT"`
-	SmtpHost       string `mapstructure:"EMAIL_SMTP_HOST"`
+	SMTPPort       int    `mapstructure:"EMAIL_SMTP_PORT"`
+	SMTPHost       string `mapstructure:"EMAIL_SMTP_HOST"`
 	EmailRecipient string `mapstructure:"EMAIL_RECIPIENT"`
-	Key string `mapstructure:"KEY"`
-	Secret string `mapstructure:"SECRET"`
+	Key            string `mapstructure:"KEY"`
+	Secret         string `mapstructure:"SECRET"`
 }
 
 func LoadEnvConfig() (Config, error) {

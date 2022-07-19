@@ -7,7 +7,7 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
-type MailAuthConfig struct {
+type AuthConfig struct {
 	Port         int
 	Host         string
 	Password     string
@@ -34,7 +34,7 @@ func (c *Client) Send(recipient, subject, body string) error {
 
 type option func(*Client)
 
-func WithDialer(mac MailAuthConfig) option {
+func WithDialer(mac AuthConfig) option {
 	// Settings for SMTP server
 	d := gomail.NewDialer(mac.Host, mac.Port, mac.EmailAddress, mac.Password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
