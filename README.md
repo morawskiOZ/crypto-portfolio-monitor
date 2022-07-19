@@ -50,6 +50,37 @@ Go version > 1.16 installed.
 ```sh
    go run main.go
    ```
+In the `cmd/main.go` file you can see an example of how to simply schedule tasks`
+```go
+	tasks := []tasker.Task{
+		&binance.Task{
+			BinanceClient:  bc,
+			MailClient:     mc,
+			Recipient:      config.EmailRecipient,
+			Counter:        0,
+			TickerDuration: time.Second * 10,
+			Task:           binance.GenerateMonitorPortfolioTask(24000, 24),
+		},
+		&binance.Task{
+			BinanceClient:  bc,
+			MailClient:     mc,
+			Recipient:      config.EmailRecipient,
+			Counter:        0,
+			TickerDuration: time.Second * 5,
+			Task:           binance.GenerateMonitorSymbolTask("ETHUSDT", 1981, true, 6*24),
+		},
+		&binance.Task{
+			BinanceClient:  bc,
+			MailClient:     mc,
+			Recipient:      config.EmailRecipient,
+			Counter:        0,
+			TickerDuration: time.Second * 15,
+			Task:           binance.GenerateMonitorSymbolTask("ETHUSDT", 780, false, 6*24),
+		},
+	}
+```
+You can extend this monitor to any other exchange or even schedule non crypto related tasks. Feel free to fork it and play with it.
+
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
