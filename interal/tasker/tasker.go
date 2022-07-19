@@ -19,7 +19,7 @@ type observableTask struct {
 }
 
 type Task interface {
-	RunTask(wg *sync.WaitGroup) error
+	RunTask() error
 	SetupTicker() *time.Ticker
 }
 
@@ -44,17 +44,17 @@ func NewTasker(options ...option) *client {
 }
 
 func (c *client) scheduleTask(ot *observableTask) {
-	// Run the task for the first time before the ticker signals
-	c.wg.Add(1)
-	if err := ot.RunTask(c.wg); err != nil {
+	if err := ot.RunTask(); err != nil {
 		fmt.Printf("Error: %+v\n", err)
 	}
-	// Run the task every time the ticker signals or the close channel is closed
+	// Run the tasks for the first time before the ticker signals
+	c.wg.Add(1)
+	defer c.wg.Done()
+	// Run the tasks every time the ticker signals or the close channel is closed
 	for {
 		select {
 		case <-ot.ticker.C:
-			c.wg.Add(1)
-			if err := ot.RunTask(c.wg); err != nil {
+			if err := ot.RunTask(); err != nil {
 				fmt.Printf("Error: %+v\n", err)
 			}
 		case <-c.close:
@@ -65,7 +65,7 @@ func (c *client) scheduleTask(ot *observableTask) {
 
 }
 
-func (pc *client) newObservableTask(t Task) *observableTask {
+func (c *client) newObservableTask(t Task) *observableTask {
 	ot := observableTask{
 		ticker: t.SetupTicker(),
 		Task:   t,
@@ -74,8 +74,8 @@ func (pc *client) newObservableTask(t Task) *observableTask {
 	return &ot
 }
 func (c *client) Run(tasks []Task) {
-	close := make(chan bool, len(tasks))
-	c.close = close
+	closeChannel := make(chan bool, len(tasks))
+	c.close = closeChannel
 
 	for _, t := range tasks {
 		ot := c.newObservableTask(t)

@@ -1,6 +1,0 @@
-package alert
-
-
-func NewAlert() {
-
-}

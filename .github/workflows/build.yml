@@ -14,7 +14,7 @@ jobs:
 
     env:
       CONTAINER_NAME: morawskioz/binance-monitor
-      CONTAINER_TAG: 
+      CONTAINER_TAG: "will_be_replaced_by_github_sha"
 
     steps:
       - uses: actions/checkout@v2

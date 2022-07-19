@@ -2,7 +2,6 @@ package binance
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/adshao/go-binance/v2"
@@ -12,8 +11,9 @@ import (
 
 // Client is the wrapper for binance API client
 type Client struct {
-	binanceClient *binance.Client
-	priceService  *binance.ListPricesService
+	binanceClient  *binance.Client
+	priceService   *binance.ListPricesService
+	accountService *binance.GetAccountService
 }
 
 // Credentials is the credentials for binance API
@@ -50,22 +50,26 @@ func NewBinanceClient(cr Credentials, options ...Option) *Client {
 	}
 	c.binanceClient = binance.NewClient(cr.Key, cr.Secret)
 	c.priceService = c.binanceClient.NewListPricesService()
+	c.accountService = c.binanceClient.NewGetAccountService()
+
 	return c
 }
 
-func (c *Client) getAccountBalances() []binance.Balance {
-	res, err := c.binanceClient.NewGetAccountService().Do(context.Background())
+func (c *Client) getAccountBalances() ([]binance.Balance, error) {
+	res, err := c.accountService.Do(context.Background())
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return nil, err
 	}
 
-	return res.Balances
+	return res.Balances, nil
 }
 
 func (c *Client) getPortfolio() (portfolio, error) {
-	balances := c.getAccountBalances()
-	portfolio := []Coin{}
+	balances, err := c.getAccountBalances()
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to get account balance")
+	}
+	var portfolio []Coin
 	for _, balance := range balances {
 		freeBalance, _ := strconv.ParseFloat(balance.Free, 64)
 		lockedBalance, _ := strconv.ParseFloat(balance.Locked, 64)
@@ -81,18 +85,17 @@ func (c *Client) getPortfolio() (portfolio, error) {
 
 		p, err := c.priceService.Symbol(s).Do(context.Background())
 		if err != nil || len(p) == 0 {
-			return nil, errors.Wrap(err, "Failed to get price")
+			return nil, errors.Wrap(err, "Failed to get prf")
 		}
 
-		price, _ := strconv.ParseFloat(p[0].Price, 64)
-		v := totalBalance * price
+		prf, _ := strconv.ParseFloat(p[0].Price, 64)
+		v := totalBalance * prf
 		portfolio = append(portfolio, Coin{
 			asset:        p[0].Symbol,
-			price:        price,
+			price:        prf,
 			totalBalance: totalBalance,
 			value:        v,
 		})
-
 	}
 
 	return portfolio, nil
@@ -101,12 +104,16 @@ func (c *Client) getPortfolio() (portfolio, error) {
 func (c *Client) GetPortfolioTotalValue() (float64, error) {
 	p, err := c.getPortfolio()
 	if err != nil {
-		return 0, errors.Wrap(err, "Can't calculate portfolio value, porfolios are not available")
+		return 0, errors.Wrap(err, "Can't calculate portfolio value, portfolios are not available")
+	}
+	if len(p) == 0 {
+		return 0, nil
 	}
 	var portfolioValue float64
 	for _, coin := range p {
 		portfolioValue += coin.value
 	}
+
 	return portfolioValue, nil
 }
 
