@@ -48,7 +48,7 @@ Go version > 1.16 installed.
 
 1. Clone repo and start with: 
 ```sh
-   go run main.go
+   make dev
    ```
 In the `cmd/main.go` file you can see an example of how to simply schedule tasks`
 ```go
