@@ -85,6 +85,7 @@ You can extend this monitor to any other exchange or even schedule non crypto re
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Running docker on server with custom envs and in detached mode
+Simples way to run this monitor is to build docker image out of it with Go binary and run it on any infrastructure (AWS, Hetzner, You moms laptop)
 ```
 docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" -e KEY="" -e SECRET="" -d dockerTagOrID
 ```
