@@ -24,7 +24,7 @@
 ## About The Project
 Go program that can monitor portfolio and coins' value. Currently, it has build in Binance API. Feel free to extend it
 
-> :warning: **By default tasker is using Binance TESTING API, add prod envs and remove `binanceAPI.WithTestFlag()` from `main.go` file`**
+> :warning: **By default tasker is using Binance TESTING API, add private api key and secret and remove `binanceAPI.WithTestFlag()` from `main.go` file to start using prod API**
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -50,7 +50,7 @@ Go version > 1.16 installed.
 ```sh
    make dev
    ```
-In the `cmd/main.go` file you can see an example of how to simply schedule tasks`
+In the `cmd/main.go` file you can see an example of how to simply schedule tasks
 ```go
 	tasks := []tasker.Task{
 		&binance.Task{
@@ -85,7 +85,7 @@ You can extend this monitor to any other exchange or even schedule non crypto re
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Running docker on server with custom envs and in detached mode
-The simplest way to run this monitor is to build docker image out of it with Go binary and run it on any infrastructure (AWS, Hetzner, Your mom's laptop)
+The simplest way to run this monitor is to build docker image out of it with Go binary and run it on any infrastructure (AWS, Hetzner, Your mom's laptop). Take a look at github action config of this repo to see how I did it.
 ```
 docker run -e EMAIL_PASS="" -e EMAIL_LOGIN="" -e EMAIL_RECIPIENT="" -e KEY="" -e SECRET="" -d dockerTagOrID
 ```
