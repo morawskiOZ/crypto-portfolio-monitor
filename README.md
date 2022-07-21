@@ -22,7 +22,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-Go program that can monitor portfolio and coins' value. Currently, it has build in Binance API. Feel free to extend it
+Go program that can monitor portfolio and coins' value. Currently, it has built-in Binance API. Feel free to extend it
 
 > :warning: **By default tasker is using Binance TESTING API, add private api key and secret and remove `binanceAPI.WithTestFlag()` from `main.go` file to start using prod API**
 <p align="right">(<a href="#top">back to top</a>)</p>
