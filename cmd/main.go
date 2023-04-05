@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/morawskioz/binance-monitor/interal/health"
 	"github.com/morawskioz/binance-monitor/interal/tasks/binance"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"os"
 	"time"
 
-	"github.com/morawskioz/binance-monitor/configs"
 	binanceAPI "github.com/morawskioz/binance-monitor/interal/binance"
 	"github.com/morawskioz/binance-monitor/interal/signal"
 	"github.com/morawskioz/binance-monitor/interal/tasker"
@@ -14,18 +16,30 @@ import (
 )
 
 func main() {
-	config, err := configs.LoadEnvConfig()
-	if err != nil {
-		fmt.Printf("Fatal error: %+v\n", err)
-		os.Exit(1)
+	if appEnv := os.Getenv("APP_ENV"); appEnv != "production" {
+		viper.SetConfigName("dev")
+		viper.AddConfigPath("../")
+	} else {
+		viper.SetConfigName("prod")
+		viper.AddConfigPath("./")
+
 	}
 
+	viper.SetConfigType("env")
+	if err := viper.ReadInConfig(); err != nil {
+		log.Info("no .env file found")
+	}
+
+	viper.AutomaticEnv()
+
+	go health.StartHealthCheck()
+	fmt.Println("Starting binance monitor", "env:", viper.GetString("APP_ENV"))
 	mc := mail.NewMailClient(
 		mail.WithDialer(mail.AuthConfig{
-			Port:         config.SMTPPort,
-			Host:         config.SMTPHost,
-			Password:     config.EmailPass,
-			EmailAddress: config.EmailLogin,
+			Port:         viper.GetInt("SMTP_PORT"),
+			Host:         viper.GetString("SMTP_HOST"),
+			Password:     viper.GetString("EMAIL_PASS"),
+			EmailAddress: viper.GetString("EMAIL_LOGIN"),
 		}),
 	)
 
@@ -34,40 +48,30 @@ func main() {
 
 	binanceAPI.WithTestFlag()
 	credentials := binanceAPI.Credentials{
-		Key:    config.Key,
-		Secret: config.Secret,
+		Key:    viper.GetString("BINANCE_KEY"),
+		Secret: viper.GetString("BINANCE_SECRET"),
 	}
 
 	bc := binanceAPI.NewBinanceClient(credentials)
-	// Delete next line to use prod API (you have to provide envs)
 
 	t := tasker.NewTasker(tasker.WithSignalChannel(so.SignalChanel))
-
+	recipient := viper.GetString("EMAIL_RECIPIENT")
 	//Tasker can run any type of task as long as it satisfies Task interface
 	tasks := []tasker.Task{
 		&binance.Task{
 			BinanceClient:  bc,
 			MailClient:     mc,
-			Recipient:      config.EmailRecipient,
-			Counter:        0,
-			TickerDuration: time.Second * 10,
-			Task:           binance.GenerateMonitorPortfolioTask(24000, 24),
+			Recipient:      recipient,
+			TickerDuration: time.Minute * 30,
+			// every week so ticker is every 30 minutes * 2 (1 hour) * 24 (1 day)
+			Task: binance.GenerateMonitorSymbolTask("BTCUSDT", 17001, false, 2*24),
 		},
 		&binance.Task{
 			BinanceClient:  bc,
 			MailClient:     mc,
-			Recipient:      config.EmailRecipient,
-			Counter:        0,
-			TickerDuration: time.Second * 5,
-			Task:           binance.GenerateMonitorSymbolTask("ETHUSDT", 1981, true, 6*24),
-		},
-		&binance.Task{
-			BinanceClient:  bc,
-			MailClient:     mc,
-			Recipient:      config.EmailRecipient,
-			Counter:        0,
-			TickerDuration: time.Second * 15,
-			Task:           binance.GenerateMonitorSymbolTask("ETHUSDT", 780, false, 6*24),
+			Recipient:      recipient,
+			TickerDuration: time.Minute * 30,
+			Task:           binance.GenerateMonitorSymbolTask("BTCUSDT", 15001, false, 0),
 		},
 	}
 	t.Run(tasks)
