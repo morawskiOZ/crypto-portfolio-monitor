@@ -20,7 +20,6 @@ RUN addgroup -S appme && adduser -S appme -G appme
 USER appme
 
 COPY --from=server_builder "/go/bin/service" "/bin/service"
-COPY --from=server_builder /app/config/ /config/
 
 EXPOSE 8080
 
