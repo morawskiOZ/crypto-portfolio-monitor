@@ -31,7 +31,7 @@ func main() {
 	}
 
 	viper.AutomaticEnv()
-
+	fmt.Println(viper.GetString("EMAIL_RECIPIENT"))
 	go health.StartHealthCheck()
 	fmt.Println("Starting binance monitor", "env:", viper.GetString("APP_ENV"))
 	mc := mail.NewMailClient(
